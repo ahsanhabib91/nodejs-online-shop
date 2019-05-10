@@ -1,17 +1,20 @@
 const path = require('path');
 
 const express = require('express'); // returns a function reference
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
 const app = express(); // app is a valid request handler function
 
-const adminRoutes = require('./routes/admin');
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/admin', adminRoutes);
+app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
