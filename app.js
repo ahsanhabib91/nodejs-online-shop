@@ -4,6 +4,7 @@ const express = require("express"); // returns a function reference
 const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
+const mongoConnect = require('./util/database').mongoConnect;
 
 const app = express(); // app is a valid request handler function
 
@@ -22,4 +23,15 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 // console.log(__dirname);
-app.listen(3000, () => console.log(`Listening on PORT 3000 http://localhost:3000`));
+
+
+
+mongoConnect(client => {
+	console.log(client);
+	app.listen(3000, () => {
+		console.log(`Listening on PORT 3000 http://localhost:3000`)
+	});
+});
+
+
+
