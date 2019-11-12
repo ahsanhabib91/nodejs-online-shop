@@ -26,8 +26,7 @@ app.use(errorController.get404);
 
 
 
-mongoConnect(client => {
-	console.log(client);
+mongoConnect(() => {
 	app.listen(3000, () => {
 		console.log(`Listening on PORT 3000 http://localhost:3000`)
 	});
