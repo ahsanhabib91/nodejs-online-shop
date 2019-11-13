@@ -60,14 +60,17 @@ exports.postEditProduct = (req, res, next) => {
   res.redirect('/admin/products');
 };
 
-exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin Products',
-      path: '/admin/products'
-    });
-  });
+exports.getProducts = async (req, res, next) => {
+	try {
+		const products = await Product.fetchAll();
+			res.render('admin/products', {
+			prods: products,
+			pageTitle: 'Admin Products',
+			path: '/admin/products'
+		});
+	} catch(err) {
+		console.log(err);
+	}
 };
 
 exports.postDeleteProduct = (req, res, next) => {
