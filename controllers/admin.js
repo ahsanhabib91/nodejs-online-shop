@@ -8,14 +8,20 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-exports.postAddProduct = (req, res, next) => {
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const price = req.body.price;
-  const description = req.body.description;
-  const product = new Product(null, title, imageUrl, description, price);
-  product.save();
-  res.redirect('/');
+exports.postAddProduct = async (req, res, next) => {
+	const title = req.body.title;
+	const price = req.body.price;
+	const description = req.body.description;
+	const imageUrl = req.body.imageUrl;
+	const product = new Product(title, price, description, imageUrl);
+	try {
+		const result = await product.save();
+		console.log('Created Product');
+		res.redirect('/admin/products');
+	} catch(err) {
+		console.log(err);
+	}
+
 };
 
 exports.getEditProduct = (req, res, next) => {

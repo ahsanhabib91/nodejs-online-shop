@@ -14,6 +14,7 @@ class Product {
 			const db = getDB();
 			const result = await db.collection('products').insertOne(this);
 			console.log(result);
+			return result;
 		} catch(err) {
 			console.log(err);
 		}

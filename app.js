@@ -17,14 +17,16 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use((req, res, next) => {
+	next();	
+});
+
 app.use("/admin", adminRoutes);
-app.use(shopRoutes);
+// app.use(shopRoutes);
 
 app.use(errorController.get404);
 
 // console.log(__dirname);
-
-
 
 mongoConnect(() => {
 	app.listen(3000, () => {
