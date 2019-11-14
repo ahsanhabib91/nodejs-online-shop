@@ -19,8 +19,7 @@ class Product {
 			} else {
 				dbOp = await db.collection('products').insertOne(this);
 			}
-			
-			console.log(dbOp);
+			// console.log(dbOp);
 			return dbOp;
 		} catch(err) {
 			console.log(err);
@@ -47,7 +46,18 @@ class Product {
 			console.log(product);
 			return product;
 		} catch(err) {
-			console.log(err);
+			console.error(err);
+			throw err;
+		}
+	}
+
+	static async deleteById(productId) {
+		try {
+			const db = getDB();
+			const result = await db.collection('products').deleteOne({ _id: new mongodb.ObjectID(productId) });
+			return result;
+		} catch(err) {
+			console.error(err);
 			throw err;
 		}
 	}

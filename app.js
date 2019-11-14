@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
 const mongoConnect = require('./util/database').mongoConnect;
+const User = require('./models/user');
 
 const app = express(); // app is a valid request handler function
 
@@ -17,7 +18,13 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+	try {
+		const user = await User.findById('5dccad999065ab08e9c82bea');
+		req.user = user;
+	} catch(err) {
+		console.error(err);
+	}
 	next();	
 });
 

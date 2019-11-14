@@ -42,25 +42,24 @@ exports.getEditProduct = async (req, res, next) => {
 		  product: product
 		});
 	} catch(err) {
-		console.log(err);
+		console.error(err);
 	}
 };
 
-exports.postEditProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  const updatedTitle = req.body.title;
-  const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
-  const updatedDesc = req.body.description;
-  const updatedProduct = new Product(
-    prodId,
-    updatedTitle,
-    updatedImageUrl,
-    updatedDesc,
-    updatedPrice
-  );
-  updatedProduct.save();
-  res.redirect('/admin/products');
+exports.postEditProduct = async (req, res, next) => {
+	try {
+		const productId = req.body.productId;
+		const updatedTitle = req.body.title;
+		const updatedPrice = req.body.price;
+		const updatedImageUrl = req.body.imageUrl;
+		const updatedDesc = req.body.description;
+		const updatedProduct = new Product(updatedTitle, updatedPrice,updatedDesc,updatedImageUrl, productId);
+		const result = await updatedProduct.save();
+		console.log('UPDATED PRODUCT!');
+		res.redirect('/admin/products');
+	} catch(err) {
+		console.error(err);
+	}
 };
 
 exports.getProducts = async (req, res, next) => {
@@ -72,12 +71,17 @@ exports.getProducts = async (req, res, next) => {
 			path: '/admin/products'
 		});
 	} catch(err) {
-		console.log(err);
+		console.error(err);
 	}
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  Product.deleteById(prodId);
-  res.redirect('/admin/products');
+exports.postDeleteProduct = async (req, res, next) => {
+	try {
+		const productId = req.body.productId;
+		const result = await Product.deleteById(productId);
+		console.log('PRODUCT DELETED!');
+		res.redirect('/admin/products');
+	} catch(err) {
+		console.error(err);
+	}
 };
