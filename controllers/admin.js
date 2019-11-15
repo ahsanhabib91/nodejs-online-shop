@@ -1,11 +1,13 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/edit-product', {
-    pageTitle: 'Add Product',
-    path: '/admin/add-product',
-    editing: false
-  });
+	console.log('req.user');
+	console.log(req.user);
+	res.render('admin/edit-product', {
+		pageTitle: 'Add Product',
+		path: '/admin/add-product',
+		editing: false
+	});
 };
 
 exports.postAddProduct = async (req, res, next) => {
@@ -13,7 +15,7 @@ exports.postAddProduct = async (req, res, next) => {
 	const price = req.body.price;
 	const description = req.body.description;
 	const imageUrl = req.body.imageUrl;
-	const product = new Product(title, price, description, imageUrl);
+	const product = new Product(title, price, description, imageUrl, null, req.user._id);
 	try {
 		const result = await product.save();
 		console.log('Created Product');
