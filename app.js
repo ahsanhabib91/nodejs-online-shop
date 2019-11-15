@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(async (req, res, next) => {
 	try {
 		const user = await User.findById('5dccad999065ab08e9c82bea');
-		req.user = user;
+		req.user = new User(user.name, user.email, user.cart, user._id);
 	} catch(err) {
 		console.error(err);
 	}

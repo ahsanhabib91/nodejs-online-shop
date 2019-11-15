@@ -61,12 +61,15 @@ exports.getCart = (req, res, next) => {
   });
 };
 
-exports.postCart = (req, res, next) => {
-  const prodId = req.body.productId;
-  Product.findById(prodId, product => {
-    Cart.addProduct(prodId, product.price);
-  });
-  res.redirect('/cart');
+exports.postCart = async (req, res, next) => {
+	try {
+		const prodId = req.body.productId;
+		const product = await Product.findById(prodId);
+		const result = await req.user.addToCart(product);
+		res.redirect('/cart');
+	} catch(err) {
+		console.error(err);
+	}
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
