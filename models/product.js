@@ -23,7 +23,7 @@ class Product {
 			// console.log(dbOp);
 			return dbOp;
 		} catch(err) {
-			console.log(err);
+			console.error(err);
 			throw err;
 		}
 	}
@@ -32,10 +32,10 @@ class Product {
 		try {
 			const db = getDB();
 			const products = await db.collection('products').find().toArray();
-			console.log(products);
+			// console.log(products);
 			return products;
 		} catch(err) {
-			console.log(err);
+			console.error(err);
 			throw err;
 		}
 	}
@@ -44,7 +44,7 @@ class Product {
 		try {
 			const db = getDB();
 			const product = await db.collection('products').find({ _id: new mongodb.ObjectID(productId) }).next();
-			console.log(product);
+			// console.log(product);
 			return product;
 		} catch(err) {
 			console.error(err);
