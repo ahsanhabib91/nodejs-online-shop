@@ -40,25 +40,17 @@ exports.getIndex = async (req, res, next) => {
 	}
 };
 
-exports.getCart = (req, res, next) => {
-  Cart.getCart(cart => {
-    Product.fetchAll(products => {
-      const cartProducts = [];
-      for (product of products) {
-        const cartProductData = cart.products.find(
-          prod => prod.id === product.id
-        );
-        if (cartProductData) {
-          cartProducts.push({ productData: product, qty: cartProductData.qty });
-        }
-      }
-      res.render('shop/cart', {
-        path: '/cart',
-        pageTitle: 'Your Cart',
-        products: cartProducts
-      });
-    });
-  });
+exports.getCart = async (req, res, next) => {
+	try {
+		const products = await req.user.getCart();
+		res.render('shop/cart', {
+			path: '/cart',
+			pageTitle: 'Your Cart',
+			products: products
+		});
+	} catch(err) {
+		console.error(err);
+	}
 };
 
 exports.postCart = async (req, res, next) => {
@@ -72,12 +64,14 @@ exports.postCart = async (req, res, next) => {
 	}
 };
 
-exports.postCartDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  Product.findById(prodId, product => {
-    Cart.deleteProduct(prodId, product.price);
-    res.redirect('/cart');
-  });
+exports.postCartDeleteProduct = async (req, res, next) => {
+	try {
+		const productId = req.body.productId;
+		const result = await req.user.deleteItemFromCart(productId);
+		res.redirect('/cart');
+	} catch(err) {
+		console.error(err);
+	}
 };
 
 exports.getOrders = (req, res, next) => {

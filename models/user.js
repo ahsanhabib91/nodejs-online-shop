@@ -40,6 +40,25 @@ class User {
 		}
 	}
 
+	async getCart() {
+		const db = getDB();
+		const productIds = this.cart.items.map(item => item.productId);
+		let products = await db.collection('products').find({ _id: { $in: productIds } }).toArray();
+		return products.map(product => {
+			const quantity = this.cart.items.find(item => item.productId.toString() === product._id.toString()).quantity;
+			return { ...product, quantity };
+		});
+	}
+
+	deleteItemFromCart(productId) {
+		const updatedCartItems = this.cart.items.filter(item => item.productId.toString() !== productId.toString());
+		const db = getDB();
+		return db.collection('users').updateOne(
+			{ _id: new ObjectId(this._id) },
+			{ $set: { cart: { items: updatedCartItems } } }
+		);
+	  }
+
 	static findById(userId) {
 		try {
 			const db = getDB();
