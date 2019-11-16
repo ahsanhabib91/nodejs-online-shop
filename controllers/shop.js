@@ -2,7 +2,8 @@ const Product = require('../models/product');
 
 exports.getProducts = async (req, res, next) => {
 	try {
-		const products = await Product.fetchAll();
+		// const products = await Product.fetchAll();
+		const products = await Product.find(); // Model.find(): mongoose method to find all documents 
 		res.render('shop/product-list', {
 			prods: products,
 			pageTitle: 'All Products',
@@ -16,7 +17,7 @@ exports.getProducts = async (req, res, next) => {
 exports.getProduct = async (req, res, next) => {
 	try {
 		const productId = req.params.productId;
-		const product = await Product.findById(productId);
+		const product = await Product.findById(productId); // Model.findById(doc_id): mongoose method to find a single doc by _id. Also _id turn into mongodb.ObjectId
 		res.render('shop/product-detail', {
 			product: product,
 			pageTitle: product.title,
@@ -29,7 +30,8 @@ exports.getProduct = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
 	try {
-		const products = await Product.fetchAll();
+		// const products = await Product.fetchAll();
+		const products = await Product.find(); // Model.find(): mongoose method to find all documents 
 		res.render('shop/index', {
 			prods: products,
 			pageTitle: 'Shop',
@@ -57,7 +59,8 @@ exports.postCart = async (req, res, next) => {
 	try {
 		const prodId = req.body.productId;
 		const product = await Product.findById(prodId);
-		const result = await req.user.addToCart(product);
+		const result = await req.user.addToCart(product); // Model.findById(doc_id): mongoose method to find a single doc by _id. Also _id turn into mongodb.ObjectId
+		console.log(`Product "${product.title}" added to the cart`);
 		res.redirect('/cart');
 	} catch(err) {
 		console.error(err);
