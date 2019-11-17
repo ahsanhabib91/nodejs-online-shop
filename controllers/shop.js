@@ -8,7 +8,8 @@ exports.getProducts = async (req, res, next) => {
 		res.render('shop/product-list', {
 			prods: products,
 			pageTitle: 'All Products',
-			path: '/products'
+			path: '/products',
+			isAuthenticated: req.session.isLoggedIn
 		});
 	} catch(err) {
 		console.log(err);
@@ -22,7 +23,8 @@ exports.getProduct = async (req, res, next) => {
 		res.render('shop/product-detail', {
 			product: product,
 			pageTitle: product.title,
-			path: '/products'
+			path: '/products',
+			isAuthenticated: req.session.isLoggedIn
 		});
 	} catch(err) {
 		console.log(err);
@@ -32,11 +34,12 @@ exports.getProduct = async (req, res, next) => {
 exports.getIndex = async (req, res, next) => {
 	try {
 		// const products = await Product.fetchAll();
-		const products = await Product.find(); // Model.find(): mongoose method to find all documents 
+		const products = await Product.find(); // Model.find(): mongoose method to find all documents
 		res.render('shop/index', {
 			prods: products,
 			pageTitle: 'Shop',
-			path: '/'
+			path: '/',
+			isAuthenticated: req.session.isLoggedIn
 		});
 	} catch(err) {
 		console.log(err);
@@ -46,12 +49,13 @@ exports.getIndex = async (req, res, next) => {
 exports.getCart = async (req, res, next) => {
 	try {
 		// const products = await req.user.getCart();
-		const user = await req.user.populate('cart.items.productId').execPopulate();
+		const user = await req.session.user.populate('cart.items.productId').execPopulate();
 		const products = user.cart.items;
 		res.render('shop/cart', {
 			path: '/cart',
 			pageTitle: 'Your Cart',
-			products: products
+			products: products,
+			isAuthenticated: req.session.isLoggedIn
 		});
 	} catch(err) {
 		console.error(err);
@@ -62,7 +66,7 @@ exports.postCart = async (req, res, next) => {
 	try {
 		const prodId = req.body.productId;
 		const product = await Product.findById(prodId);
-		const result = await req.user.addToCart(product); // Model.findById(doc_id): mongoose method to find a single doc by _id. Also _id turn into mongodb.ObjectId
+		const result = await req.session.user.addToCart(product); // Model.findById(doc_id): mongoose method to find a single doc by _id. Also _id turn into mongodb.ObjectId
 		console.log(`Product "${product.title}" added to the cart`);
 		res.redirect('/cart');
 	} catch(err) {
@@ -73,7 +77,7 @@ exports.postCart = async (req, res, next) => {
 exports.postCartDeleteProduct = async (req, res, next) => {
 	try {
 		const productId = req.body.productId;
-		const result = await req.user.deleteItemFromCart(productId);
+		const result = await req.session.user.deleteItemFromCart(productId);
 		console.log('Item Deleted');
 		res.redirect('/cart');
 	} catch(err) {
@@ -84,11 +88,12 @@ exports.postCartDeleteProduct = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
 	try {
 		// const orders = await req.user.getOrders();
-		const orders = await Order.find({ 'user.userId': req.user._id });
+		const orders = await Order.find({ 'user.userId': req.session.user._id });
 		res.render('shop/orders', {
 			path: '/orders',
 			pageTitle: 'Your Orders',
-			orders: orders
+			orders: orders,
+			isAuthenticated: req.session.isLoggedIn
 		});
 	} catch(err) {
 		console.error(err);
@@ -98,20 +103,20 @@ exports.getOrders = async (req, res, next) => {
 exports.postOrder = async (req, res, next) => {
 	try {
 		// const result = await req.user.addOrder();
-		const user = await req.user.populate('cart.items.productId').execPopulate();
+		const user = await req.session.user.populate('cart.items.productId').execPopulate();
 		console.log(user.cart.items);
 		const products = user.cart.items.map(item => {
 			return { product: {...item.productId._doc},  quantity: item.quantity }
 		});
 		const order = new Order({
 			user: {
-				name: req.user.name,
-				userId: req.user
+				name: req.session.user.name,
+				userId: req.session.user
 			},
 			products: products
 		});
 		await order.save();
-		await req.user.clearCart();
+		await req.session.user.clearCart();
 		res.redirect('/orders');
 	} catch(err) {
 		console.error(err);
@@ -122,6 +127,7 @@ exports.postOrder = async (req, res, next) => {
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',
-    pageTitle: 'Checkout'
+	pageTitle: 'Checkout',
+	isAuthenticated: req.session.isLoggedIn
   });
 };

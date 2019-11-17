@@ -19,8 +19,10 @@
   "homepage": "https://github.com/ahsanhabib91/nodejs-online-shop#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "connect-mongodb-session": "^2.2.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
+    "express-session": "^1.17.0",
     "mongodb": "^3.3.3",
     "mongoose": "^5.7.11"
   },
