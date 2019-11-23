@@ -15,15 +15,18 @@ exports.postLogin = async (req, res, next) => {
 		const user = await User.findById('5dd03792f525021bcec8298d');
 		req.session.user = user;
 		req.session.isLoggedIn = true;
-		res.redirect('/');
+		req.session.save(err => { // req.session.save(callback) is called so that res.redirect('/') called after the session creates
+			console.log(err);
+			res.redirect('/');
+		});
 	} catch(err) {
 		console.error(err);
 	}
 };
 
 exports.postLogout = (req, res, next) => {
-//   req.session.destroy(err => {
-//     console.log(err);
-//     res.redirect('/');
-//   });
+	req.session.destroy(err => {
+		console.log(err);
+		res.redirect('/');
+	});
 };

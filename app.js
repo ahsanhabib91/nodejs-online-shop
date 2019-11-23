@@ -34,15 +34,18 @@ app.use(session({
 	store: store
 }));
 
-// app.use(async (req, res, next) => {
-// 	try {
-// 		const user = await User.findById('5dd03792f525021bcec8298d');
-// 		req.user = user;
-// 		next();	
-// 	} catch(err) {
-// 		console.error(err);
-// 	}
-// });
+app.use(async (req, res, next) => {
+	try {
+		if(!req.session.user) {
+			return next();
+		}
+		const user = await User.findById(req.session.user._id);
+		req.user = user;
+		next();	
+	} catch(err) {
+		console.error(err);
+	}
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
