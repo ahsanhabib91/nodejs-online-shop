@@ -1,5 +1,18 @@
 const User = require('../models/user');
 
+exports.getSignup = (req, res, next) => {
+	res.render('auth/signup', {
+		path: '/signup',
+		pageTitle: 'Signup',
+		isAuthenticated: false
+	});
+};
+
+exports.postSignup = (req, res, next) => {
+	console.dir(req.body);
+	res.redirect('/');
+};
+
 exports.getLogin = (req, res, next) => {
 	console.log(req.get('Cookie'));
 	console.log(req.session.isLoggedIn);
@@ -12,6 +25,7 @@ exports.getLogin = (req, res, next) => {
 
 exports.postLogin = async (req, res, next) => {
 	try {
+		res.setHeader('Set-Cookie', 'name=habib; HttpOnly');
 		const user = await User.findById('5dd03792f525021bcec8298d');
 		req.session.user = user;
 		req.session.isLoggedIn = true;
