@@ -8,8 +8,26 @@ exports.getSignup = (req, res, next) => {
 	});
 };
 
-exports.postSignup = (req, res, next) => {
-	console.dir(req.body);
+exports.postSignup = async (req, res, next) => {
+	const email = req.body.email;
+	const password = req.body.password;
+	const confirmPassword = req.body.confirmPassword;
+	const userDoc = await User.findOne({ email: email });
+	console.log('UserDoc:');
+	console.dir(userDoc);
+	if(userDoc) {
+		console.log(`Sorry, User with email ${email} exists !!!`);
+		return res.redirect('/signup');
+	}
+	const user = new User({ 
+		email: email, 
+		password: password, 
+		cart: { 
+			items: [] 
+		} 
+	});
+	await user.save();
+	console.log('User Created successfully !!!');
 	res.redirect('/');
 };
 

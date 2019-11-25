@@ -56,18 +56,7 @@ app.use(errorController.get404);
 // console.log(__dirname);
 
 mongoose.connect(MONGODB_URI, { useUnifiedTopology: true, retryWrites: true, useNewUrlParser: true })
-.then( async (result) => {
-	const user = await User.findOne();
-	if (!user) {
-		const user = new User({
-		  	name: 'Habib',
-		  	email: 'habib@gmail.com',
-		  	cart: {
-				items: []
-			}
-		});
-		user.save();
-	}
+.then(result => {
 	app.listen(3000, () => {
 		console.log(`Listening on PORT 3000 http://localhost:3000`)
 	});
