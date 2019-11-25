@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 exports.getSignup = (req, res, next) => {
 	res.render('auth/signup', {
@@ -13,18 +14,17 @@ exports.postSignup = async (req, res, next) => {
 	const password = req.body.password;
 	const confirmPassword = req.body.confirmPassword;
 	const userDoc = await User.findOne({ email: email });
-	console.log('UserDoc:');
-	console.dir(userDoc);
 	if(userDoc) {
 		console.log(`Sorry, User with email ${email} exists !!!`);
 		return res.redirect('/signup');
 	}
+	const hashedPassword = await bcrypt.hash(password, 11);
 	const user = new User({ 
 		email: email, 
-		password: password, 
+		password: hashedPassword, 
 		cart: { 
 			items: [] 
-		} 
+		}
 	});
 	await user.save();
 	console.log('User Created successfully !!!');
