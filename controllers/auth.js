@@ -32,8 +32,8 @@ exports.postSignup = async (req, res, next) => {
 };
 
 exports.getLogin = (req, res, next) => {
-	console.log(req.get('Cookie'));
-	console.log(req.session.isLoggedIn);
+	// console.log(req.get('Cookie'));
+	// console.log(req.session.isLoggedIn);
 	res.render('auth/login', {
 		path: '/login',
 		pageTitle: 'Login',
@@ -44,15 +44,28 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = async (req, res, next) => {
 	try {
 		res.setHeader('Set-Cookie', 'name=habib; HttpOnly');
-		const user = await User.findById('5dd03792f525021bcec8298d');
-		req.session.user = user;
-		req.session.isLoggedIn = true;
-		req.session.save(err => { // req.session.save(callback) is called so that res.redirect('/') called after the session creates
-			console.log(err);
-			res.redirect('/');
-		});
+		const email = req.body.email;
+		const password = req.body.password;
+		const user = await User.findOne({ email: email });
+		if(!user) {
+			console.log('Sorry, User does not exit');
+			return res.redirect('/login');
+		}
+		const doMatch = await bcrypt.compare(password, user.password);
+		if(doMatch) {
+			console.log('Password match, Login successfully !!!');
+			req.session.user = user;
+			req.session.isLoggedIn = true;
+			return req.session.save(err => { // req.session.save(callback) is called so that res.redirect('/') called after the session creates
+				console.log(err);
+				res.redirect('/');
+			});
+		}
+		console.log('Sorry, Password mismatch !!!');
+		return res.redirect('/login');
 	} catch(err) {
 		console.error(err);
+		res.redirect('/');
 	}
 };
 
